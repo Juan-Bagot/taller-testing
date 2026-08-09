@@ -1,0 +1,361 @@
+[
+ {
+  "grupo": "Casos web funcionales (TC01–TC30)",
+  "secciones": [
+   {
+    "seccion": "Flujo: Registro",
+    "casos": [
+     {
+      "id": "TC01",
+      "alerta": false,
+      "titulo": "Registro exitoso de paciente",
+      "cuerpo": "Precondiciones: sin sesión iniciada.\nPasos:\n1. Ir a `registro.php`.\n2. Dejar seleccionado el tipo \"Paciente\".\n3. Completar Nombre: `Paciente Prueba <timestamp>`, Email: `paciente.<timestamp>@test.com`, Contraseña: `secreta123`, Mutualista/Especialidad: `SEMM`.\n4. Enviar con \"Crear cuenta\".\nResultado esperado: redirige a `login.php`; se muestra el flash ok \"Cuenta creada. Ya podés iniciar sesión.\"; con esas credenciales el login funciona (la barra muestra el nombre del usuario). *(Deja un usuario nuevo: es aditivo y de email único; no afecta otros casos.)*"
+     },
+     {
+      "id": "TC02",
+      "alerta": false,
+      "titulo": "Registro exitoso de médico",
+      "cuerpo": "Precondiciones: sin sesión.\nPasos:\n1. Ir a `registro.php`.\n2. Seleccionar el tipo \"Médico/a\".\n3. Completar Nombre, Email único con timestamp, Contraseña, y Especialidad: `Cardiología`.\n4. Enviar.\nResultado esperado: flash ok \"Cuenta creada. Ya podés iniciar sesión.\" en `login.php`; al iniciar sesión con la cuenta nueva, la barra muestra el enlace \"Nueva prestación\" (rol MEDICO efectivo)."
+     },
+     {
+      "id": "TC03",
+      "alerta": false,
+      "titulo": "Registro con email repetido",
+      "cuerpo": "Precondiciones: sin sesión; existe `ana@mail.com` (semilla).\nPasos:\n1. Ir a `registro.php`.\n2. Completar el formulario con Email `ana@mail.com` y el resto de los campos válidos.\n3. Enviar.\nResultado esperado: permanece/vuelve a `registro.php`; flash error \"Ya existe un usuario con ese email.\"; no se crea sesión (la barra sigue mostrando \"Entrar\" / \"Registrarse\")."
+     }
+    ]
+   },
+   {
+    "seccion": "Flujo: Login y sesión",
+    "casos": [
+     {
+      "id": "TC04",
+      "alerta": false,
+      "titulo": "Login exitoso de paciente",
+      "cuerpo": "Precondiciones: sin sesión; semilla cargada.\nPasos:\n1. Ir a `login.php`.\n2. Completar Email `ana@mail.com`, Contraseña `ana123`.\n3. Enviar con \"Entrar\".\nResultado esperado: redirige a `catalogo.php`; flash ok \"Hola, Ana García.\"; la barra muestra \"Ana García\" y \"Salir\"; están visibles los enlaces \"Seguidas\", \"Solicitud\" e \"Historial\"; en el catálogo cada fila ofrece \"Seguir\" y \"Solicitar\", y NO ofrece \"Editar\" ni \"Eliminar\"."
+     },
+     {
+      "id": "TC05",
+      "alerta": false,
+      "titulo": "Login exitoso de médico",
+      "cuerpo": "Precondiciones: sin sesión.\nPasos:\n1. Iniciar sesión con `admin@mail.com` / `admin123`.\nResultado esperado: redirige a `catalogo.php` con flash ok \"Hola, Dra. Admin.\"; la barra muestra \"Nueva prestación\" y NO muestra \"Seguidas\"/\"Solicitud\"/\"Historial\"; en el catálogo cada fila ofrece \"Editar\" y \"Eliminar\", y NO ofrece \"Seguir\" ni \"Solicitar\"."
+     },
+     {
+      "id": "TC06",
+      "alerta": false,
+      "titulo": "Login con credenciales inválidas (mismo mensaje en ambas variantes)",
+      "cuerpo": "Precondiciones: sin sesión.\nPasos:\n1. Ir a `login.php`, ingresar `ana@mail.com` / `incorrecta` y enviar.\n2. Verificar el mensaje.\n3. Ingresar `noexiste@mail.com` / `loquesea` y enviar.\nResultado esperado: en ambos intentos permanece en `login.php` con flash error **idéntico**: \"Email o contraseña incorrectos.\" (no se revela si el email existe); no hay sesión iniciada."
+     },
+     {
+      "id": "TC07",
+      "alerta": false,
+      "titulo": "Salir cierra la sesión y descarta la solicitud a medio armar",
+      "cuerpo": "Precondiciones: semilla cargada.\nPasos:\n1. Iniciar sesión como `luis@mail.com` / `luis123`.\n2. En el catálogo, \"Solicitar\" sobre Audiometría (el contador de la barra pasa a 1).\n3. Click en \"Salir\".\n4. Intentar ir directo a `historial.php`.\n5. Volver a iniciar sesión como Luis e ir a \"Solicitud\".\nResultado esperado: (3) redirige a `login.php` y la barra vuelve a mostrar \"Entrar\"; (4) redirige a `login.php` con flash \"Tenés que iniciar sesión para entrar ahí.\"; (5) la solicitud está vacía (\"La solicitud está vacía.\") y la barra no muestra contador — el carrito no sobrevive al cierre de sesión."
+     }
+    ]
+   },
+   {
+    "seccion": "Flujo: Control de acceso",
+    "casos": [
+     {
+      "id": "TC08",
+      "alerta": false,
+      "titulo": "Anónimo no entra a ninguna página protegida",
+      "cuerpo": "Precondiciones: contexto sin sesión (navegador limpio).\nPasos:\n1. Navegar directo a `seguidas.php`. 2. Ídem `solicitud.php`. 3. Ídem `historial.php`. 4. Ídem `prestacion_alta.php`.\nResultado esperado: las cuatro veces redirige a `login.php` con flash error \"Tenés que iniciar sesión para entrar ahí.\" (el control es del servidor: no depende de que los botones estén ocultos)."
+     },
+     {
+      "id": "TC09",
+      "alerta": false,
+      "titulo": "Paciente no accede a funciones de médico",
+      "cuerpo": "Precondiciones: sesión como `ana@mail.com`.\nPasos:\n1. Navegar directo a `prestacion_alta.php`.\n2. Navegar directo a `prestacion_editar.php?id=1`.\nResultado esperado: ambas veces redirige a `catalogo.php` con flash error \"Esa función es solo para médicos.\"; la sesión de Ana sigue activa."
+     },
+     {
+      "id": "TC10",
+      "alerta": false,
+      "titulo": "Médico no accede a funciones de paciente",
+      "cuerpo": "Precondiciones: sesión como `admin@mail.com`.\nPasos:\n1. Navegar directo a `seguidas.php`. 2. Ídem `solicitud.php`. 3. Ídem `historial.php`.\nResultado esperado: las tres veces redirige a `catalogo.php` con flash error \"Esa función es solo para pacientes.\""
+     }
+    ]
+   },
+   {
+    "seccion": "Flujo: Catálogo, búsqueda y orden",
+    "casos": [
+     {
+      "id": "TC11",
+      "alerta": false,
+      "titulo": "Catálogo ordenado por nombre (orden por defecto)",
+      "cuerpo": "Precondiciones: semilla cargada; sin sesión.\nPasos:\n1. Ir a `catalogo.php` sin parámetros.\nResultado esperado: la tabla contiene las 8 prestaciones semilla en orden alfabético **relativo**: Audiometría, Ecografía abdominal, Electrocardiograma, Fisioterapia de rodilla, Fonoaudiología, Masoterapia, Radiografía de tórax, Terapia respiratoria; cada fila muestra Tipo (Estudio/Terapia), Franja y Precio formateado (`$ 700,00`); como anónimo, la única acción por fila es \"Ver\"."
+     },
+     {
+      "id": "TC12",
+      "alerta": false,
+      "titulo": "Catálogo ordenado por precio",
+      "cuerpo": "Precondiciones: semilla; sin sesión.\nPasos:\n1. Ir a `catalogo.php`.\n2. En el selector de orden elegir \"Por precio\" y click en \"Aplicar\".\nResultado esperado: la URL contiene `orden=precio`; el orden relativo de las semilla es ascendente por precio: Masoterapia ($400) primero … Ecografía abdominal ($1.800) al final — nótese que difiere del alfabético (Audiometría ya no es la primera); el selector queda en \"Por precio\"."
+     },
+     {
+      "id": "TC13",
+      "alerta": false,
+      "titulo": "Búsqueda case-insensitive combinada con orden",
+      "cuerpo": "Precondiciones: semilla; sin sesión.\nPasos:\n1. En el catálogo, escribir `TERAPIA` (en MAYÚSCULAS) en el campo de búsqueda, elegir \"Por precio\" y \"Aplicar\".\nResultado esperado: aparecen exactamente 3 prestaciones semilla pese a que sus nombres están en minúsculas/mixto — Masoterapia, Fisioterapia de rodilla y Terapia respiratoria — en ese orden (ascendente por precio); la URL contiene `buscar=TERAPIA&orden=precio`; el input conserva el texto y el select conserva \"Por precio\" (se puede refrescar y el resultado persiste)."
+     },
+     {
+      "id": "TC14",
+      "alerta": false,
+      "titulo": "Búsqueda sin resultados y \"Limpiar\"",
+      "cuerpo": "Precondiciones: sin sesión.\nPasos:\n1. Buscar el texto `zzz-no-existe`.\n2. Click en el enlace \"Limpiar\".\nResultado esperado: (1) no se muestra la tabla; se muestra el mensaje \"No hay prestaciones que coincidan con la búsqueda.\" y aparece el enlace \"Limpiar\"; (2) el catálogo vuelve a mostrar todas las prestaciones y el campo de búsqueda queda vacío."
+     }
+    ]
+   },
+   {
+    "seccion": "Flujo: Detalle de prestación",
+    "casos": [
+     {
+      "id": "TC15",
+      "alerta": false,
+      "titulo": "Detalle de un Estudio",
+      "cuerpo": "Precondiciones: semilla; sin sesión.\nPasos:\n1. En el catálogo, click en el nombre \"Audiometría\".\nResultado esperado: se muestra la etiqueta \"Estudio\", el título \"Audiometría\", Precio `$ 700,00`, Franja horaria \"Mañana\" y Duración \"20 minutos\"; NO se muestran \"Requiere derivación\" ni \"Cantidad de sesiones\"; existe el enlace \"← Volver al catálogo\"."
+     },
+     {
+      "id": "TC16",
+      "alerta": false,
+      "titulo": "Detalle de una Terapia",
+      "cuerpo": "Precondiciones: semilla; sin sesión.\nPasos:\n1. Ir al detalle de \"Terapia respiratoria\".\nResultado esperado: etiqueta \"Terapia\", Precio `$ 1.500,00`, Franja \"Noche\", \"Requiere derivación: Sí\", \"Cantidad de sesiones: 5\"; NO se muestra \"Duración\"."
+     },
+     {
+      "id": "TC17",
+      "alerta": false,
+      "titulo": "Detalle con id inexistente",
+      "cuerpo": "Precondiciones: ninguna.\nPasos:\n1. Navegar directo a `prestacion.php?id=99999`.\nResultado esperado: redirige a `catalogo.php` con flash error \"No existe esa prestación.\""
+     }
+    ]
+   },
+   {
+    "seccion": "Flujo: CRUD de prestaciones (médico)",
+    "casos": [
+     {
+      "id": "TC18",
+      "alerta": false,
+      "titulo": "Crear un estudio (auto-contenido)",
+      "cuerpo": "Precondiciones: sesión como médico.\nPasos:\n1. Click en \"Nueva prestación\".\n2. Tipo \"Estudio\"; Nombre `Estudio Prueba <timestamp>`; Precio `990`; Franja \"Tarde\"; Duración `25`.\n3. Enviar con \"Crear prestación\".\n4. Verificar en el catálogo y en el detalle.\n5. **Limpieza**: eliminarla desde el catálogo (o vía `DELETE /api/prestacion.php`).\nResultado esperado: (3) redirige a `catalogo.php` con flash ok \"Prestación creada.\"; (4) la fila aparece con tipo \"Estudio\", franja \"Tarde\" y `$ 990,00`, y el detalle muestra \"Duración: 25 minutos\"; (5) el caso termina sin dejar rastro."
+     },
+     {
+      "id": "TC19",
+      "alerta": false,
+      "titulo": "Crear una terapia con derivación (auto-contenido)",
+      "cuerpo": "Precondiciones: sesión como médico.\nPasos:\n1. \"Nueva prestación\"; tipo \"Terapia\"; Nombre único con timestamp; Precio `1250`; Franja \"Noche\"; marcar \"Requiere derivación\"; Cantidad de sesiones `12`.\n2. Enviar; abrir el detalle.\n3. **Limpieza**: eliminarla.\nResultado esperado: flash ok \"Prestación creada.\"; el detalle muestra \"Requiere derivación: Sí\" y \"Cantidad de sesiones: 12\"; sin rastro al terminar."
+     },
+     {
+      "id": "TC20",
+      "alerta": false,
+      "titulo": "Crear con nombre repetido (auto-contenido)",
+      "cuerpo": "Precondiciones: sesión como médico.\nPasos:\n1. Crear una prestación con nombre único `P-<timestamp>` (queda creada).\n2. Intentar crear OTRA con exactamente el mismo nombre.\n3. **Limpieza**: eliminar la del paso 1.\nResultado esperado: (2) vuelve a `prestacion_alta.php` con flash error \"Ya existe una prestación con ese nombre.\" y en el catálogo hay UNA sola fila con ese nombre. *(Variante mínima sin crear nada: usar el nombre semilla \"Audiometría\"; también es válida y es read-only.)*"
+     },
+     {
+      "id": "TC21",
+      "alerta": false,
+      "titulo": "Editar una prestación (auto-contenido; el tipo no se cambia)",
+      "cuerpo": "Precondiciones: sesión como médico.\nPasos:\n1. Crear un estudio `Editar-<timestamp>` con precio `500`.\n2. En el catálogo, click \"Editar\" en su fila.\n3. Verificar que el tipo se muestra como dato fijo (\"Tipo: Estudio\", sin radios para cambiarlo).\n4. Cambiar el nombre a `Editada-<timestamp>` y el precio a `900`; \"Guardar cambios\".\n5. **Limpieza**: eliminarla.\nResultado esperado: (4) redirige a `catalogo.php` con flash ok \"Prestación actualizada.\"; el catálogo muestra el nombre nuevo con `$ 900,00` y ya no muestra el nombre viejo."
+     },
+     {
+      "id": "TC22",
+      "alerta": false,
+      "titulo": "Eliminar una prestación sin uso (auto-contenido)",
+      "cuerpo": "Precondiciones: sesión como médico.\nPasos:\n1. Crear una prestación `Borrar-<timestamp>` (UI o API).\n2. En el catálogo, click \"Eliminar\" en su fila.\nResultado esperado: flash ok \"Prestación eliminada.\"; la fila ya no aparece; navegar a su detalle por URL redirige al catálogo con \"No existe esa prestación.\" *(La variante con datos semilla es eliminar \"Audiometría\", pero eso muta la semilla: preferir SIEMPRE esta versión auto-contenida.)*"
+     },
+     {
+      "id": "TC23",
+      "alerta": false,
+      "titulo": "La eliminación se bloquea si la prestación está en una orden (read-only)",
+      "cuerpo": "Precondiciones: sesión como médico; semilla cargada (Electrocardiograma figura en la orden vieja de Ana).\nPasos:\n1. En el catálogo, click \"Eliminar\" en la fila de \"Electrocardiograma\".\nResultado esperado: flash error \"No se puede eliminar: la prestación aparece en una orden médica.\"; Electrocardiograma sigue en el catálogo (el historial no se reescribe). El caso no modifica nada: se puede repetir infinitas veces."
+     },
+     {
+      "id": "TC24",
+      "alerta": true,
+      "titulo": "Eliminar con cascada de seguidas (Masoterapia)",
+      "cuerpo": "Precondiciones: semilla RECIÉN cargada (Masoterapia está solo en las seguidas de Ana, en ninguna orden).\nPasos:\n1. Sesión como médico; verificar que Masoterapia está en el catálogo.\n2. (Opcional, en otro contexto) sesión como Ana: verificar que Masoterapia figura en \"Mis seguidas\".\n3. Como médico, \"Eliminar\" sobre Masoterapia.\n4. Sesión como Ana: ir a \"Mis seguidas\".\nResultado esperado: (3) flash ok \"Prestación eliminada.\"; (4) Masoterapia ya NO aparece en las seguidas de Ana (la FK con CASCADE la limpió) y Ana conserva sus otras 2 seguidas.\n**⚠ Este caso destruye datos semilla.** Documentar en el test y en el README: correrlo al final de la suite o resetear la base después (`docker compose down -v && up -d && seed`). Alternativa auto-contenida (recomendada para la suite automatizada): el médico crea una prestación nueva, Ana la sigue, el médico la elimina y se verifica la cascada — cero impacto en la semilla."
+     }
+    ]
+   },
+   {
+    "seccion": "Flujo: Seguidas (paciente)",
+    "casos": [
+     {
+      "id": "TC25",
+      "alerta": false,
+      "titulo": "Seguir desde el detalle y quitar (auto-contenido)",
+      "cuerpo": "Precondiciones: sesión como `luis@mail.com` (solo sigue \"Terapia respiratoria\"); Audiometría no está entre sus seguidas.\nPasos:\n1. Ir al detalle de \"Audiometría\" y click en \"Seguir\".\n2. Verificar que vuelve al **detalle** de Audiometría (el hidden `volver`) con flash ok \"Agregada a tus seguidas.\"\n3. Ir a \"Mis seguidas\": la fila de Audiometría aparece con tipo \"Estudio\", precio `$ 700,00` y \"Seguida desde\" = fecha de hoy.\n4. **Limpieza**: click \"Quitar\" en esa fila.\nResultado esperado: tras (4), Audiometría desaparece de la lista y \"Terapia respiratoria\" sigue ahí — la lista quedó como al principio.\n*Dos trampas conocidas al automatizarlo: la \"fecha de hoy\" se compara en hora **local** (`toISOString()` de JavaScript es UTC: de noche ya es \"mañana\"); y conviene **limpieza defensiva** — quitar la seguida también al EMPEZAR el test, porque si una corrida anterior falló a mitad, el residuo hace fallar el paso 1 con \"Ya estás siguiendo esa prestación\".*"
+     },
+     {
+      "id": "TC26",
+      "alerta": false,
+      "titulo": "No se puede seguir dos veces la misma prestación (read-only)",
+      "cuerpo": "Precondiciones: sesión como `ana@mail.com` (ya sigue \"Fonoaudiología\" por semilla).\nPasos:\n1. En el catálogo, click \"Seguir\" en la fila de \"Fonoaudiología\".\nResultado esperado: flash error \"Ya estás siguiendo esa prestación.\"; en \"Mis seguidas\" Fonoaudiología aparece UNA sola vez. Nada cambió: repetible."
+     }
+    ]
+   },
+   {
+    "seccion": "Flujo: Solicitud, orden e historial (paciente)",
+    "casos": [
+     {
+      "id": "TC27",
+      "alerta": false,
+      "titulo": "Armar y editar la solicitud (auto-contenido: el carrito vive en la sesión)",
+      "cuerpo": "Precondiciones: sesión como `luis@mail.com` en un contexto de navegador **nuevo** (carrito vacío garantizado).\nPasos:\n1. En el catálogo, \"Solicitar\" sobre Audiometría → el contador de la barra muestra 1.\n2. Ir al detalle de \"Fonoaudiología\", poner Cantidad `3` y \"Agregar a la solicitud\" → contador 4.\n3. Ir a \"Solicitud\": verificar filas y montos.\n4. \"Quitar\" la fila de Fonoaudiología.\n5. \"Quitar\" la fila de Audiometría.\nResultado esperado: (3) Audiometría `$ 700,00 × 1 = $ 700,00`; Fonoaudiología `$ 600,00 × 3 = $ 1.800,00`; Total `$ 2.500,00`; (4) el total recalcula a `$ 700,00`; (5) se muestra \"La solicitud está vacía.\" y el contador desaparece. No tocó la base en ningún momento."
+     },
+     {
+      "id": "TC28",
+      "alerta": false,
+      "titulo": "Confirmar la orden médica",
+      "cuerpo": "Precondiciones: sesión como `luis@mail.com`, contexto nuevo.\nPasos:\n1. Agregar a la solicitud: Ecografía abdominal ×1 y Fisioterapia de rodilla ×2.\n2. Ir a \"Solicitud\" y click \"Confirmar la orden médica\".\n3. Observar el flash y el historial.\nResultado esperado: redirige a `historial.php` con flash ok \"Orden #N confirmada.\" (N numérico); la **primera** orden del historial (más reciente) contiene Ecografía abdominal ×1 a `$ 1.800,00` y Fisioterapia de rodilla ×2 a `$ 850,00` (subtotal `$ 1.700,00`), total `$ 3.500,00`; el contador del carrito quedó en cero. *(Aditivo: crea una orden nueva — por eso NUNCA se asertan cantidades absolutas de órdenes: siempre \"la primera orden\". Y las prestaciones elegidas YA estaban en órdenes semilla, a propósito: ordenar una prestación la vuelve no-eliminable para siempre, así que este caso no debe usar Audiometría ni Masoterapia, que la semilla mantiene eliminables para TC22/TC24.)*"
+     },
+     {
+      "id": "TC29",
+      "alerta": false,
+      "titulo": "Historial descendente y precio histórico congelado (read-only, caso estrella)",
+      "cuerpo": "Precondiciones: semilla cargada; sesión como `ana@mail.com`.\nPasos:\n1. Ir a \"Historial\".\n2. Verificar el orden de las órdenes semilla: la de hace 2 días (Ecografía abdominal) aparece ANTES que la de hace 10 días (Electrocardiograma + Fisioterapia).\n3. En la orden vieja, leer el precio de \"Electrocardiograma\".\n4. En otra pestaña/navegación, abrir el detalle de \"Electrocardiograma\" en el catálogo.\nResultado esperado: (2) historial más reciente primero; (3) la línea muestra \"Precio de ese momento\" `$ 1.000,00` y el total de esa orden es `$ 1.850,00`; (4) el catálogo/detalle muestra el precio ACTUAL `$ 1.200,00` — el historial no cambió aunque el precio sí."
+     },
+     {
+      "id": "TC30",
+      "alerta": false,
+      "titulo": "Precio histórico end-to-end con dos roles (auto-contenido, avanzado)",
+      "cuerpo": "Precondiciones: dos contextos de navegador: médico (`admin@mail.com`) y paciente (`luis@mail.com`).\nPasos:\n1. Médico: crear prestación `Historico-<timestamp>`, precio `500`.\n2. Paciente: solicitarla ×1 y confirmar la orden (anotar el número del flash).\n3. Médico: editarla y cambiar el precio a `800`.\n4. Paciente: ir al Historial y localizar la orden del paso 2; ir también al detalle en el catálogo.\nResultado esperado: la línea de la orden muestra `$ 500,00` (precio congelado al confirmar); el catálogo muestra `$ 800,00`. *(Residuo: la prestación queda en una orden y por regla de negocio ya no es eliminable — es un residuo aditivo con nombre único, aceptable y documentado. Bonus didáctico: intentar eliminarla y recibir \"No se puede eliminar…\" convierte la limpieza imposible en una aserción más.)*\n\n---"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "grupo": "Casos visuales (TV01–TV06)",
+  "secciones": [
+   {
+    "seccion": "",
+    "casos": [
+     {
+      "id": "TV01",
+      "alerta": false,
+      "titulo": "Login en escritorio (1280×720)",
+      "cuerpo": "Precondiciones: sin sesión.\nPasos: 1. Ir a `login.php`. 2. `expect(page).toHaveScreenshot('login-escritorio.png')`.\nResultado esperado: la captura coincide con la baseline: formulario en tarjeta, tarjeta \"Usuarios de prueba\" al costado, barra con \"Entrar\"/\"Registrarse\"."
+     },
+     {
+      "id": "TV02",
+      "alerta": false,
+      "titulo": "Registro en escritorio (1280×720)",
+      "cuerpo": "Precondiciones: sin sesión.\nPasos: 1. Ir a `registro.php`. 2. Captura de página completa.\nResultado esperado: coincide con la baseline (radios Paciente/Médico, 4 campos con label, botón \"Crear cuenta\")."
+     },
+     {
+      "id": "TV03",
+      "alerta": false,
+      "titulo": "Catálogo anónimo en escritorio (1280×720)",
+      "cuerpo": "Precondiciones: **semilla intacta** (8 prestaciones exactas; si la suite creó datos, este caso debe correr antes o tras un reset — documentarlo en el spec).\nPasos: 1. Ir a `catalogo.php`. 2. Captura de página completa.\nResultado esperado: coincide con la baseline: tabla de 8 filas ordenada por nombre, formulario de filtros arriba."
+     },
+     {
+      "id": "TV04",
+      "alerta": false,
+      "titulo": "Catálogo en móvil (375×667): la tabla se vuelve bloques",
+      "cuerpo": "Precondiciones: semilla intacta; proyecto/viewport 375×667.\nPasos: 1. Ir a `catalogo.php` con viewport móvil. 2. Captura de página completa.\nResultado esperado: coincide con la baseline móvil: las filas se muestran como bloques apilados y cada celda muestra su rótulo (`data-rotulo`: \"Nombre\", \"Tipo\", \"Franja\", \"Precio\") — el `@media` actúa gracias al meta viewport."
+     },
+     {
+      "id": "TV05",
+      "alerta": false,
+      "titulo": "Detalle de terapia en móvil (375×667)",
+      "cuerpo": "Precondiciones: semilla intacta.\nPasos: 1. Ir al detalle de \"Terapia respiratoria\" con viewport 375. 2. Captura de página completa.\nResultado esperado: coincide con la baseline: tarjeta de detalle apilada con etiqueta \"Terapia\", precio grande y la lista de definiciones legible a una columna."
+     },
+     {
+      "id": "TV06",
+      "alerta": false,
+      "titulo": "Screenshot de ELEMENTO: el mensaje flash de error",
+      "cuerpo": "Precondiciones: sin sesión.\nPasos: 1. En `login.php`, enviar credenciales inválidas. 2. Capturar SOLO el elemento del mensaje (`locator('.mensaje-error')`) con `toHaveScreenshot('flash-error.png')`.\nResultado esperado: coincide con la baseline del elemento (fondo/estilo de error con el texto \"Email o contraseña incorrectos.\"). Demuestra la técnica de captura por elemento, mucho menos frágil que la página completa.\n\n---"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "grupo": "Casos de API (TA01–TA13)",
+  "secciones": [
+   {
+    "seccion": "",
+    "casos": [
+     {
+      "id": "TA01",
+      "alerta": false,
+      "titulo": "Login por API exitoso",
+      "cuerpo": "Precondiciones: semilla cargada; contexto de request nuevo.\nPasos: 1. `POST /api/login.php` con cuerpo `{\"email\":\"admin@mail.com\",\"password\":\"admin123\"}`.\nResultado esperado: estado **200**; cuerpo `{\"ok\":true,\"datos\":{\"email\":\"admin@mail.com\",\"nombre\":\"Dra. Admin\",\"tipo\":\"MEDICO\"}}`; la respuesta setea la cookie de sesión (las llamadas siguientes del contexto quedan autenticadas). `Content-Type` incluye `application/json`."
+     },
+     {
+      "id": "TA02",
+      "alerta": false,
+      "titulo": "Login por API: negativos",
+      "cuerpo": "Precondiciones: contexto nuevo.\nPasos: 1. `POST /api/login.php` con `{\"email\":\"admin@mail.com\",\"password\":\"mala\"}`. 2. `POST` con `{\"email\":\"admin@mail.com\"}` (falta password). 3. `POST` con cuerpo `esto-no-es-json`.\nResultado esperado: (1) **401** con `error.codigo = \"CREDENCIALES_INVALIDAS\"` y mensaje \"Email o contraseña incorrectos.\"; (2) **400** `VALIDACION`; (3) **400** `JSON_INVALIDO`. En todos, `ok: false`."
+     },
+     {
+      "id": "TA03",
+      "alerta": false,
+      "titulo": "Listar prestaciones (público) y shape por subtipo",
+      "cuerpo": "Precondiciones: semilla; SIN login.\nPasos: 1. `GET /api/prestaciones.php`.\nResultado esperado: **200**; `datos` es un array que contiene las 8 semilla en orden alfabético relativo; el elemento \"Electrocardiograma\" tiene `tipo:\"ESTUDIO\"`, `precio:1200`, `franja:\"NOCHE\"`, `duracion_minutos:10` y NO tiene campos de terapia; \"Terapia respiratoria\" tiene `tipo:\"TERAPIA\"`, `requiere_derivacion:true`, `cantidad_sesiones:5` y NO tiene `duracion_minutos`."
+     },
+     {
+      "id": "TA04",
+      "alerta": false,
+      "titulo": "Listar con búsqueda y orden",
+      "cuerpo": "Precondiciones: semilla; sin login.\nPasos: 1. `GET /api/prestaciones.php?buscar=TERAPIA&orden=precio`. 2. `GET /api/prestaciones.php?orden=cualquiera`.\nResultado esperado: (1) **200** con exactamente 3 resultados semilla en orden Masoterapia, Fisioterapia de rodilla, Terapia respiratoria (case-insensitive + orden por precio); (2) **400** `VALIDACION` (orden inválido)."
+     },
+     {
+      "id": "TA05",
+      "alerta": false,
+      "titulo": "Detalle por id",
+      "cuerpo": "Precondiciones: semilla; sin login.\nPasos: 1. Obtener el id de \"Audiometría\" desde el listado. 2. `GET /api/prestacion.php?id={id}`.\nResultado esperado: **200**; `datos` = `{\"id\":…, \"nombre\":\"Audiometría\",\"precio\":700,\"franja\":\"MANANA\",\"tipo\":\"ESTUDIO\",\"duracion_minutos\":20}`."
+     },
+     {
+      "id": "TA06",
+      "alerta": false,
+      "titulo": "Detalle: id inexistente y ausente",
+      "cuerpo": "Pasos: 1. `GET /api/prestacion.php?id=99999`. 2. `GET /api/prestacion.php` (sin id). 3. `GET /api/prestacion.php?id=abc`.\nResultado esperado: (1) **404** `NO_EXISTE` con mensaje \"No existe esa prestación.\"; (2) y (3) **400** `VALIDACION`."
+     },
+     {
+      "id": "TA07",
+      "alerta": false,
+      "titulo": "Crear sin sesión → 401",
+      "cuerpo": "Precondiciones: contexto de request SIN login.\nPasos: 1. `POST /api/prestaciones.php` con un cuerpo válido de estudio.\nResultado esperado: **401** `NO_AUTENTICADO`; el listado NO contiene la prestación (no se creó nada)."
+     },
+     {
+      "id": "TA08",
+      "alerta": false,
+      "titulo": "Crear con sesión de paciente → 403",
+      "cuerpo": "Precondiciones: login por API como `ana@mail.com`/`ana123`.\nPasos: 1. `POST /api/prestaciones.php` con cuerpo válido.\nResultado esperado: **403** `SOLO_MEDICO`; nada creado."
+     },
+     {
+      "id": "TA09",
+      "alerta": false,
+      "titulo": "Crear como médico → 201 (auto-contenido)",
+      "cuerpo": "Precondiciones: login por API como médico.\nPasos:\n1. `POST /api/prestaciones.php` con `{\"tipo\":\"TERAPIA\",\"nombre\":\"Api-<timestamp>\",\"precio\":777,\"franja\":\"TARDE\",\"requiere_derivacion\":true,\"cantidad_sesiones\":4}`.\n2. `GET /api/prestacion.php?id={id devuelto}`.\n3. **Limpieza**: `DELETE /api/prestacion.php?id={id}`.\nResultado esperado: (1) **201**, `datos.id` numérico y el resto de los campos eco del enviado; (2) **200** con los mismos datos persistidos; (3) **200** `{\"eliminada\":true}` — sin rastro al terminar."
+     },
+     {
+      "id": "TA10",
+      "alerta": false,
+      "titulo": "Crear inválida → 400 (variantes de validación)",
+      "cuerpo": "Precondiciones: login como médico.\nPasos: 1. `POST` con `precio: 0`. 2. `POST` con `nombre: \"\"`. 3. `POST` con `franja:\"MADRUGADA\"`. 4. `POST` con `tipo:\"CIRUGIA\"`.\nResultado esperado: **400** `VALIDACION` en todos, con los mensajes del servicio en (1) \"El precio tiene que ser mayor que cero.\" y (2) \"El nombre no puede estar vacío.\"; nada creado (verificable por listado)."
+     },
+     {
+      "id": "TA11",
+      "alerta": false,
+      "titulo": "Crear con nombre repetido → 409 (read-only)",
+      "cuerpo": "Precondiciones: login como médico; semilla.\nPasos: 1. `POST /api/prestaciones.php` con `nombre:\"Audiometría\"` y resto válido.\nResultado esperado: **409** `NOMBRE_REPETIDO`, mensaje \"Ya existe una prestación con ese nombre.\"; el listado sigue teniendo UNA sola Audiometría."
+     },
+     {
+      "id": "TA12",
+      "alerta": false,
+      "titulo": "Modificar con PUT (auto-contenido + negativos)",
+      "cuerpo": "Precondiciones: login como médico.\nPasos:\n1. Crear por API `Put-<timestamp>` precio `500`.\n2. `PUT /api/prestacion.php?id={id}` cambiando nombre a `Put-editada-<timestamp>` y precio a `900`.\n3. `GET` para verificar.\n4. `PUT /api/prestacion.php?id=99999` con cuerpo válido.\n5. `PUT` sobre {id} con `nombre:\"Audiometría\"`.\n6. **Limpieza**: `DELETE` {id}.\nResultado esperado: (2) **200** con los datos nuevos; (3) confirma persistencia; (4) **404** `NO_EXISTE`; (5) **409** `NOMBRE_REPETIDO` (choca con OTRA prestación)."
+     },
+     {
+      "id": "TA13",
+      "alerta": false,
+      "titulo": "Eliminar: feliz, bloqueada y método no permitido",
+      "cuerpo": "Precondiciones: login como médico; semilla (Electrocardiograma en orden).\nPasos:\n1. Crear por API `Del-<timestamp>` y `DELETE /api/prestacion.php?id={id}`.\n2. `GET` sobre ese id.\n3. Obtener el id de \"Electrocardiograma\" y `DELETE /api/prestacion.php?id={ese id}`.\n4. `PATCH /api/prestacion.php?id=1`.\nResultado esperado: (1) **200** `{\"eliminada\":true}`; (2) **404**; (3) **409** `EN_ORDEN` — \"No se puede eliminar: la prestación aparece en una orden médica.\" y Electrocardiograma sigue en el listado; (4) **405** `METODO_NO_PERMITIDO` con header `Allow: GET, PUT, DELETE`."
+     }
+    ]
+   }
+  ]
+ }
+]

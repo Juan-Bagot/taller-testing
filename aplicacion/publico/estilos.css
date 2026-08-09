@@ -1,0 +1,439 @@
+/* ============================================================================
+   CSS escrito a mano, sin ninguna librería.
+
+   Se apoya en cuatro cosas del CSS moderno:
+   - variables (los colores y medidas se definen UNA vez, acá arriba)
+   - flexbox (la barra de navegación, los formularios de acciones)
+   - grid (no hace falta acá, pero es la otra pata del layout moderno)
+   - @media (al final: las reglas para pantallas chicas)
+   ============================================================================ */
+
+:root {
+    /* colores */
+    --tinta:        #12262e;   /* el "negro": un azul petróleo muy oscuro */
+    --tinta-suave:  #46606b;
+    --tinta-tenue:  #7d939d;
+    --verde:        #0e7c6b;   /* el color de la clínica: lo accionable */
+    --verde-oscuro: #0a5f52;   /* hover de lo accionable */
+    --verde-claro:  #e0f2ee;   /* fondos suaves del color de marca */
+    --rojo:         #b3362c;   /* acciones destructivas y errores */
+    --rojo-claro:   #f7e6e4;
+    --crema:        #f6f8f7;   /* el fondo general */
+    --blanco:       #ffffff;
+    --linea:        #dfe7e4;
+
+    /* formas */
+    --radio:        12px;
+    --radio-chico:  8px;
+    --sombra:       0 2px 10px rgba(18, 38, 46, 0.08);
+
+    /* tipografía: la pila del sistema, sin webfonts */
+    --fuente: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ============================ BASE ============================ */
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: var(--fuente);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--tinta);
+    background: var(--crema);
+}
+
+main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 16px 64px;
+}
+
+h1 { font-size: 26px; margin: 16px 0 20px; }
+h2 { font-size: 18px; margin: 0 0 8px; }
+
+a { color: var(--verde); }
+a:hover { color: var(--verde-oscuro); }
+
+code {
+    background: var(--verde-claro);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* ============================ BARRA SUPERIOR ============================ */
+
+.barra {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 12px 20px;
+    background: var(--blanco);
+    border-bottom: 1px solid var(--linea);
+}
+
+.barra .marca {
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--verde);
+    text-decoration: none;
+}
+
+.barra .enlaces {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.barra a { text-decoration: none; color: var(--tinta-suave); font-weight: 600; }
+.barra a:hover { color: var(--verde); }
+
+.barra .quien {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nombre-usuario { color: var(--tinta-tenue); }
+
+.contador {
+    display: inline-block;
+    min-width: 20px;
+    text-align: center;
+    background: var(--verde);
+    color: var(--blanco);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 1px 6px;
+}
+
+/* ============================ MENSAJES FLASH ============================ */
+
+.mensaje {
+    max-width: 960px;
+    margin: 16px auto 0;
+    padding: 12px 16px;
+    border-radius: var(--radio-chico);
+    font-weight: 600;
+}
+
+.mensaje-ok    { background: var(--verde-claro); color: var(--verde-oscuro); }
+.mensaje-error { background: var(--rojo-claro);  color: var(--rojo); }
+
+/* ============================ BOTONES ============================ */
+
+.boton {
+    display: inline-block;
+    background: var(--verde);
+    color: var(--blanco);
+    border: none;
+    border-radius: 999px;
+    padding: 10px 22px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.boton:hover { background: var(--verde-oscuro); color: var(--blanco); }
+
+.boton.chico  { padding: 6px 14px; font-size: 14px; }
+.boton.grande { padding: 14px 32px; font-size: 17px; }
+
+.boton.secundario {
+    background: var(--blanco);
+    color: var(--verde);
+    box-shadow: inset 0 0 0 2px var(--verde);
+}
+.boton.secundario:hover { background: var(--verde-claro); }
+
+.boton.peligro {
+    background: var(--blanco);
+    color: var(--rojo);
+    box-shadow: inset 0 0 0 2px var(--rojo);
+}
+.boton.peligro:hover { background: var(--rojo-claro); }
+
+/* ============================ TARJETAS ============================ */
+
+.tarjeta {
+    background: var(--blanco);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.etiqueta {
+    display: inline-block;
+    background: var(--verde-claro);
+    color: var(--verde-oscuro);
+    border-radius: 999px;
+    padding: 2px 12px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.vacio { color: var(--tinta-tenue); }
+
+/* ============================ TABLAS ============================ */
+
+.listado {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--blanco);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra);
+    overflow: hidden;
+}
+
+.listado th, .listado td {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--linea);
+}
+
+.listado th {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--tinta-tenue);
+}
+
+.listado tr:last-child td { border-bottom: none; }
+
+.listado .numero { text-align: right; }
+
+.listado .acciones {
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* los botones dentro de una celda: en fila, sin ocupar líneas nuevas */
+.listado .acciones form { display: inline-block; margin-left: 6px; }
+
+.listado tfoot .total td {
+    font-weight: 800;
+    font-size: 17px;
+    border-top: 2px solid var(--tinta);
+}
+
+.listado.compacto th, .listado.compacto td { padding: 8px 12px; }
+
+/* ============================ FORMULARIOS ============================ */
+
+.formulario { max-width: 480px; }
+
+.formulario label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 14px;
+}
+
+.formulario input[type="text"],
+.formulario input[type="email"],
+.formulario input[type="password"],
+.formulario input[type="number"],
+.formulario input[type="search"],
+.formulario select {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    padding: 10px 12px;
+    font: inherit;
+    border: 1px solid var(--linea);
+    border-radius: var(--radio-chico);
+    background: var(--crema);
+}
+
+.formulario input:focus, .formulario select:focus {
+    outline: 2px solid var(--verde);
+    border-color: var(--verde);
+}
+
+.formulario fieldset {
+    border: 1px solid var(--linea);
+    border-radius: var(--radio-chico);
+    margin: 0 0 14px;
+    padding: 12px 16px;
+}
+
+.formulario legend { font-weight: 700; padding: 0 6px; }
+
+.formulario .en-linea { display: flex; align-items: center; gap: 8px; }
+.formulario .en-linea input { width: auto; margin: 0; }
+
+.opciones-tipo { display: flex; gap: 24px; }
+.opciones-tipo label { display: flex; align-items: center; gap: 6px; margin: 0; }
+.opciones-tipo input { width: auto; margin: 0; }
+
+.al-pie { color: var(--tinta-tenue); margin-bottom: 0; }
+.dato-fijo { margin-top: 0; }
+
+.ayuda { max-width: 480px; }
+.ayuda p { margin-bottom: 0; }
+
+/* ============================ FILTROS DEL CATÁLOGO ============================ */
+
+.filtros {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.filtros input[type="search"], .filtros select {
+    padding: 9px 12px;
+    font: inherit;
+    border: 1px solid var(--linea);
+    border-radius: 999px;
+    background: var(--blanco);
+}
+
+.filtros input[type="search"] { flex: 1; min-width: 200px; }
+
+/* ============================ DETALLE ============================ */
+
+.volver { margin-bottom: 0; }
+
+.detalle dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 8px 24px;
+    margin: 16px 0;
+}
+
+.detalle dt { font-weight: 700; color: var(--tinta-suave); }
+.detalle dd { margin: 0; }
+
+.precio-grande { font-size: 22px; font-weight: 800; color: var(--verde-oscuro); }
+
+.acciones-detalle {
+    display: flex;
+    gap: 12px;
+    align-items: end;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--linea);
+    padding-top: 16px;
+}
+
+.con-cantidad { display: flex; gap: 12px; align-items: end; }
+.con-cantidad label { font-weight: 600; }
+.con-cantidad input { display: block; width: 80px; margin-top: 4px; padding: 8px; font: inherit;
+                      border: 1px solid var(--linea); border-radius: var(--radio-chico); }
+
+/* ============================ HISTORIAL ============================ */
+
+.orden header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+}
+
+.orden .fecha { color: var(--tinta-tenue); }
+.orden .listado { box-shadow: none; border: 1px solid var(--linea); }
+
+.confirmar { margin-top: 20px; text-align: right; }
+
+/* ============================ CASOS DE PRUEBA ============================ */
+
+.solapas { display: flex; gap: 10px; }
+
+.seccion-casos {
+    margin: 28px 0 12px;
+    color: var(--tinta-suave);
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.caso { padding: 0; margin-bottom: 10px; }
+
+.caso summary {
+    cursor: pointer;
+    padding: 14px 20px;
+    font-weight: 700;
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+}
+
+.caso summary::-webkit-details-marker { display: none; }
+
+.caso[open] summary { border-bottom: 1px solid var(--linea); }
+
+.caso .caso-cuerpo {
+    padding: 14px 20px 18px;
+    color: var(--tinta-suave);
+}
+
+/* ============================================================================
+   RESPONSIVE: pantallas angostas (teléfonos).
+
+   La idea es UNA sola: las tablas dejan de ser tablas. Cada fila pasa a ser
+   un bloque (display: block), se esconde el encabezado, y cada celda muestra
+   su rótulo con un ::before que lee el atributo data-rotulo del HTML.
+   Los tres criterios de la letra: nada de scroll lateral, todo legible,
+   botones que se puedan apretar con el dedo.
+   ============================================================================ */
+
+@media (max-width: 700px) {
+
+    main { padding: 16px 12px 48px; }
+
+    .barra { gap: 10px; padding: 10px 12px; }
+    .barra .quien { margin-left: 0; }
+
+    /* la tabla se vuelve una pila de bloques */
+    .listado thead { display: none; }
+
+    .listado, .listado tbody, .listado tfoot, .listado tr, .listado td {
+        display: block;
+        width: 100%;
+    }
+
+    .listado tr {
+        border-bottom: 8px solid var(--crema);
+        padding: 8px 0;
+    }
+
+    .listado td {
+        border: none;
+        padding: 6px 16px;
+    }
+
+    /* cada celda muestra de qué es el dato, leyendo data-rotulo del HTML */
+    .listado td[data-rotulo]::before {
+        content: attr(data-rotulo) ": ";
+        font-weight: 700;
+        color: var(--tinta-tenue);
+    }
+
+    .listado .numero { text-align: left; }
+
+    .listado .acciones {
+        text-align: left;
+        white-space: normal;
+    }
+
+    /* botones a lo ancho de la pantalla, cómodos para el dedo */
+    .listado .acciones form { display: block; margin: 6px 0; }
+    .listado .acciones .boton { display: block; width: 100%; text-align: center; padding: 12px; }
+
+    .listado tfoot .total td { border-top: 2px solid var(--tinta); }
+
+    .filtros input[type="search"] { min-width: 0; }
+
+    .detalle dl { grid-template-columns: 1fr; gap: 2px; }
+    .detalle dt { margin-top: 10px; }
+
+    .acciones-detalle, .con-cantidad { flex-direction: column; align-items: stretch; }
+    .acciones-detalle .boton { width: 100%; text-align: center; }
+}

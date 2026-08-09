@@ -1,0 +1,68 @@
+# Entorno completo del laboratorio: PHP + Apache, MySQL y phpMyAdmin.
+#
+#   Levantar:                docker compose up -d --build
+#   Cargar los datos:        docker compose exec web php /var/www/app/datos/datos_iniciales.php
+#   Ver que está todo:       docker compose ps
+#   Apagar:                  docker compose down
+#   Borrar TODO y de cero:   docker compose down -v
+#
+# La app queda en http://localhost:9080 y phpMyAdmin en http://localhost:9081
+#
+# Los puertos y nombres difieren a propósito de los de la clínica del curso de PHP:
+# ambas apps pueden estar levantadas a la vez sin chocar.
+
+name: clinica-testing
+
+services:
+
+  web:
+    # PHP 8.3 + Apache. La imagen se construye con el Dockerfile de esta carpeta,
+    # que agrega la extensión pdo_mysql (la imagen oficial no la trae).
+    build: .
+    container_name: clinica-testing-web
+    ports:
+      - "9080:80"                 # http://localhost:9080
+    volumes:
+      # El docroot de Apache: la ÚNICA carpeta alcanzable por URL.
+      - ./publico:/var/www/html
+      # app/ queda AL LADO del docroot, no adentro: el navegador no puede pedirla,
+      # pero PHP la alcanza con  require __DIR__ . '/../app/...'
+      - ./app:/var/www/app
+    depends_on:
+      db:
+        condition: service_healthy   # espera a que MySQL de verdad acepte conexiones
+
+  db:
+    image: mysql:8.4
+    container_name: clinica-testing-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: clinica
+      MYSQL_USER: clinica
+      MYSQL_PASSWORD: clinica
+    ports:
+      - "3307:3306"               # solo para clientes externos; la app usa el host "db"
+    volumes:
+      - datos_mysql_testing:/var/lib/mysql
+      # Los .sql de esta carpeta se ejecutan solos, la PRIMERA vez que nace el volumen.
+      - ./sql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uclinica", "-pclinica"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  phpmyadmin:
+    # Para mirar la base por dentro desde el navegador: http://localhost:8081
+    # (usuario: clinica / contraseña: clinica)
+    image: phpmyadmin:5
+    container_name: clinica-testing-phpmyadmin
+    ports:
+      - "9081:80"
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
+
+volumes:
+  datos_mysql_testing:
