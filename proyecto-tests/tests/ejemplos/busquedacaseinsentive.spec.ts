@@ -15,5 +15,4 @@ test('TC13: Búsqueda case-insensitive combinada con orden', async ({page}) => {
     //await expect(page.getByLabel('Ordenar por')).toHaveValue('precio');
     await expect(page.locator('select[name="orden"]')).toHaveValue('precio');
     //controlar el refresh?
-
 });
