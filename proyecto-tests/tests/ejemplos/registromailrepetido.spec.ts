@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { PaginaRegistro} from '../../pages/PaginaRegistro';
 import { esperarFlash } from '../../helpers/flash';
-import { nombreUnico, emailUnico } from '../../helpers/datos';
+
 
 test('TC03: Registro con email repetido', async ({ page }) => {
     const Registro = new PaginaRegistro(page);

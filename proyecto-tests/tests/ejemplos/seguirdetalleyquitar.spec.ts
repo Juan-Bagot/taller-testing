@@ -21,7 +21,7 @@ test('TC25 — Seguir desde el detalle y quitar', async ({ comoPaciente: page })
     
     await page.getByRole('button', { name: 'Seguir' }).click();
     await esperarFlash(page, 'ok', 'Agregada a tus seguidas.');
-    await page.getByText('Agregada a tus seguidas.');
+    await expect(page.getByText('Agregada a tus seguidas.'));
     await page.getByRole('link', { name: 'Seguidas' }).click();
 
     await expect(page).toHaveURL(/seguidas\.php/);
