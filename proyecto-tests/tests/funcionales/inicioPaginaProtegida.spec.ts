@@ -1,26 +1,25 @@
-import { test, expect } from '@playwright/test';
+// Flujo: Control de acceso — TC08.
+// El control es del servidor: no depende de que los botones estén ocultos.
 
-test('TC08 — Anónimo no entra a ninguna página protegida', async ({ page }) => {
-  const baseUrl = 'http://127.0.0.1:9080/'; 
+import { expect, test } from "@playwright/test";
+import { esperarFlash } from "../../helpers/flash";
 
-  // Definimos las páginas que queremos probar
-  const paginasProtegidas = [
-    'seguidas.php',
-    'solicitud.php',
-    'historial.php',
-    'prestacion_alta.php'
-  ];
+const PAGINAS_PROTEGIDAS = [
+  "seguidas.php",
+  "solicitud.php",
+  "historial.php",
+  "prestacion_alta.php",
+];
 
-  // Recorremos cada página y ejecutamos la misma validación
-  for (const ruta of paginasProtegidas) {
-    
-    await page.goto(`${baseUrl}${ruta}`);
-
-    // Resultado esperado A: Redirige a login.php
-    await expect(page).toHaveURL(`${baseUrl}login.php`);
-
-    // Resultado esperado B: Muestra el mensaje flash de error
-    const mensajeFlash = page.getByText('Tenés que iniciar sesión para entrar ahí.');
-    await expect(mensajeFlash).toBeVisible();
-  }
-});
+// Un test por página: si una falla, el reporte dice cuál, y las otras igual corren.
+for (const url of PAGINAS_PROTEGIDAS) {
+  test(`TC08: anónimo a ${url} rebota al login`, async ({ page }) => {
+    await page.goto("/" + url);
+    await expect(page).toHaveURL(/login\.php/);
+    await esperarFlash(
+      page,
+      "error",
+      "Tenés que iniciar sesión para entrar ahí.",
+    );
+  });
+}
