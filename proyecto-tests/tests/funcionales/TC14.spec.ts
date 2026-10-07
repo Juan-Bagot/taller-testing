@@ -1,7 +1,7 @@
 // ============================================================================
 // TC14 — Búsqueda sin resultados y "Limpiar"
 // ----------------------------------------------------------------------------
-// Flujo: Catálogo, búsqueda y orden · Rol: anónimo · Documentación: docs/TC14.md
+// Flujo: Catálogo, búsqueda y orden · Rol: anónimo
 //
 // El caso verifica las dos mitades del "camino vacío" de la búsqueda:
 //   1. buscar algo que no existe NO muestra una tabla vacía, sino el mensaje
@@ -22,7 +22,6 @@ const TEXTO_INEXISTENTE = 'zzz-no-existe';
 
 test('TC14: una búsqueda sin resultados muestra el mensaje y "Limpiar" la deshace', async ({ page }) => {
   const catalogo = new PaginaCatalogo(page);
-  const mensajeVacio = page.getByText('No hay prestaciones que coincidan con la búsqueda.');
 
   await catalogo.ir();
   await expect(catalogo.titulo()).toBeVisible();
@@ -38,7 +37,7 @@ test('TC14: una búsqueda sin resultados muestra el mensaje y "Limpiar" la desha
     await expect(page).toHaveURL(/[?&]buscar=zzz-no-existe/);
 
     // (1) Ni tabla ni filas: el mensaje la reemplaza.
-    await expect(mensajeVacio).toBeVisible();
+    await expect(catalogo.mensajeSinResultados()).toBeVisible();
     await expect(catalogo.tabla()).toHaveCount(0);
 
     // El input conserva lo buscado y aparece el enlace "Limpiar".
@@ -55,7 +54,7 @@ test('TC14: una búsqueda sin resultados muestra el mensaje y "Limpiar" la desha
 
     // ...con el campo de búsqueda vacío, sin mensaje y sin "Limpiar"...
     await expect(catalogo.campoDeBusqueda()).toHaveValue('');
-    await expect(mensajeVacio).toHaveCount(0);
+    await expect(catalogo.mensajeSinResultados()).toHaveCount(0);
     await expect(catalogo.enlaceLimpiar()).toHaveCount(0);
 
     // ...y con TODAS las prestaciones. Aserción relativa (regla de oro): las 8

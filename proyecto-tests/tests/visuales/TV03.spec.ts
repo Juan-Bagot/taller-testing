@@ -1,7 +1,7 @@
 // ============================================================================
 // TV03 — Catálogo anónimo en escritorio (1280×720)
 // ----------------------------------------------------------------------------
-// Flujo: Presentación visual · Rol: anónimo · Documentación: docs/TV03.md
+// Flujo: Presentación visual · Rol: anónimo
 //
 // La contraparte de escritorio de TV04: a 1280px el catálogo se ve como TABLA
 // (cabecera con columnas, una fila por prestación) con el formulario de

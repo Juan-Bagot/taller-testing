@@ -132,6 +132,11 @@ export class PaginaCatalogo {
     return this.page.getByRole('link', { name: 'Limpiar' });
   }
 
+  /** El mensaje que reemplaza a la tabla cuando la búsqueda no encuentra nada. */
+  mensajeSinResultados(): Locator {
+    return this.page.getByText('No hay prestaciones que coincidan con la búsqueda.');
+  }
+
   // ---------------------------------------------------------------------------
   // Acciones por fila (existen o no según el rol logueado)
   // ---------------------------------------------------------------------------

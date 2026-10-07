@@ -1,7 +1,7 @@
 // ============================================================================
 // TA03 — Listar prestaciones (público) y shape por subtipo
 // ----------------------------------------------------------------------------
-// Flujo: API JSON · Rol: anónimo (sin login) · Documentación: docs/TA03.md
+// Flujo: API JSON · Rol: anónimo (sin login)
 //
 // El caso verifica que `GET /api/prestaciones.php`:
 //   1. es público (200 sin cookie de sesión);

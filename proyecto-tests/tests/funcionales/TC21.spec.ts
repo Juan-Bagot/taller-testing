@@ -1,7 +1,7 @@
 // ============================================================================
 // TC21 — Editar una prestación (auto-contenido; el tipo no se cambia)
 // ----------------------------------------------------------------------------
-// Flujo: CRUD de prestaciones · Rol: médico · Documentación: docs/TC21.md
+// Flujo: CRUD de prestaciones · Rol: médico
 //
 // El caso verifica el ciclo completo de la edición:
 //   1. el médico crea un estudio propio (no toca la semilla);

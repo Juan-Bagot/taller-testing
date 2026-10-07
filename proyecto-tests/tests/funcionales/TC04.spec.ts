@@ -1,7 +1,7 @@
 // ============================================================================
 // TC04 — Login exitoso de paciente
 // ----------------------------------------------------------------------------
-// Flujo: Login y sesión · Rol: paciente (Ana García) · Documentación: docs/TC04.md
+// Flujo: Login y sesión · Rol: paciente (Ana García)
 //
 // El caso verifica TRES cosas a la vez:
 //   1. que el login funciona (redirect + flash de bienvenida);

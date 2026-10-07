@@ -1,7 +1,7 @@
 // ============================================================================
 // TC11 — Catálogo ordenado por nombre (orden por defecto)
 // ----------------------------------------------------------------------------
-// Flujo: Catálogo, búsqueda y orden · Rol: anónimo · Documentación: docs/TC11.md
+// Flujo: Catálogo, búsqueda y orden · Rol: anónimo
 //
 // El caso verifica que, al entrar a `catalogo.php` SIN parámetros:
 //   1. las 8 prestaciones semilla aparecen en orden alfabético RELATIVO;

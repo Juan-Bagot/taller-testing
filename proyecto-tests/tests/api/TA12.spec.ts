@@ -1,7 +1,7 @@
 // ============================================================================
 // TA12 — Modificar con PUT (auto-contenido + negativos)
 // ----------------------------------------------------------------------------
-// Flujo: API JSON · Rol: médico · Documentación: docs/TA12.md
+// Flujo: API JSON · Rol: médico
 //
 // El caso verifica `PUT /api/prestacion.php?id=N`:
 //   1. camino feliz: cambia nombre y precio, responde 200 con los datos nuevos

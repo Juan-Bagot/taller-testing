@@ -1,7 +1,7 @@
 // ============================================================================
 // TV04 — Catálogo en móvil (375×667): la tabla se vuelve bloques
 // ----------------------------------------------------------------------------
-// Flujo: Presentación visual · Rol: anónimo · Documentación: docs/TV04.md
+// Flujo: Presentación visual · Rol: anónimo
 //
 // Un test funcional verifica que el precio DIGA "$ 700,00". Un test visual
 // verifica que la página SE VEA como debe: atrapa el CSS roto, la columna
@@ -11,13 +11,19 @@
 // del catálogo en bloques apilados, con el rótulo de cada celda (`data-rotulo`:
 // Nombre, Tipo, Franja, Precio) impreso al costado.
 //
-// DÓNDE VIVE Y POR QUÉ:
-//   · está en `tests/visuales/` → es lo que matchea el `testMatch: /visuales[\/]/`
-//     del proyecto `movil` en playwright.config.ts, el único con viewport 375;
-//   · ese proyecto está declarado PRIMERO en la config, así que los visuales
-//     corren antes que los funcionales, sobre la semilla intacta (esta captura
-//     es de página completa: si otro caso hubiera creado una prestación, la
-//     tabla tendría una fila de más y la comparación fallaría).
+// DÓNDE CORRE:
+//   · el proyecto `movil` de playwright.config.ts (viewport 375×667) solo corre
+//     los specs cuya ruta matchea `testMatch: /.*visual.*/` — por eso vive en
+//     `tests/visuales/`. En `escritorio` el caso se salta (test.skip de abajo).
+//
+// PRECONDICIÓN — SEMILLA INTACTA (8 prestaciones exactas):
+//   la captura es de página completa: si otro caso dejó una prestación de más
+//   (residuo de TC28/TC30), la tabla tendría una fila extra y la comparación
+//   fallaría. Por eso se corre sobre una base recién sembrada; si está sucia,
+//   falla en la aserción `toHaveCount(8)`, con un mensaje claro.
+//
+// BASELINE: la máquina de referencia del grupo es LINUX
+// (`catalogo-movil-movil-linux.png`).
 //
 // Impacto en los datos: NINGUNO (read-only), pero EXIGE la semilla intacta.
 // ============================================================================

@@ -1,7 +1,7 @@
 // ============================================================================
 // TA04 — Listar con búsqueda y orden
 // ----------------------------------------------------------------------------
-// Flujo: API JSON · Rol: anónimo (sin login) · Documentación: docs/TA04.md
+// Flujo: API JSON · Rol: anónimo (sin login)
 //
 // El caso es el TC13 hablado por API:
 //   1. `buscar=TERAPIA&orden=precio` → la búsqueda es case-insensitive y se

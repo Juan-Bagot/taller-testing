@@ -1,7 +1,7 @@
 // ============================================================================
 // TC12 — Catálogo ordenado por precio
 // ----------------------------------------------------------------------------
-// Flujo: Catálogo, búsqueda y orden · Rol: anónimo · Documentación: docs/TC12.md
+// Flujo: Catálogo, búsqueda y orden · Rol: anónimo
 //
 // El caso verifica que, al elegir "Por precio" y aplicar:
 //   1. la URL lleva `orden=precio` (el formulario es GET: el orden se comparte);
