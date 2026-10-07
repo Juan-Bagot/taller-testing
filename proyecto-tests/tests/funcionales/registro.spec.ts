@@ -16,17 +16,14 @@ test('TC01: registro exitoso de paciente', async ({ page }) => {
     tipo: 'Paciente', nombre, email, password, extra: 'SEMM',
   });
 
-  // PRG: primero la URL, después el flash (vive una sola página).
   await expect(page).toHaveURL(/login\.php/);
   await esperarFlash(page, 'ok', 'Cuenta creada. Ya podés iniciar sesión.');
 
-  // Con esas credenciales el login funciona y la barra muestra el nombre.
   await new PaginaLogin(page).entrar(email, password);
   await expect(page).toHaveURL(/catalogo\.php/);
   await esperarFlash(page, 'ok', `Hola, ${nombre}.`);
   await expect(page.getByText(nombre, { exact: true })).toBeVisible();
 
-  // Rol efectivo PACIENTE: ve "Historial", no "Nueva prestación".
   await expect(page.getByRole('link', { name: 'Historial' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Nueva prestación' })).toHaveCount(0);
 });

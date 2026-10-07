@@ -15,7 +15,6 @@ test('TA01: login por API exitoso', async ({ request }) => {
     datos: { email: MEDICO.email, nombre: MEDICO.nombre, tipo: 'MEDICO' },
   });
 
-  // La respuesta setea la cookie de sesión en el contexto.
   const { cookies } = await request.storageState();
   expect(cookies.length).toBeGreaterThan(0);
 });

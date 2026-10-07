@@ -16,7 +16,7 @@ test.beforeEach(({}, testInfo) => {
 test("TV01: login en escritorio", async ({ page }) => {
   await page.goto("/login.php");
 
-  // Estabilizar antes de capturar: la página tiene que estar completa.
+  // Estabilizar antes de capturar
   await expect(page.getByRole("button", { name: "Entrar" })).toBeVisible();
 
   await expect(page).toHaveScreenshot("login-escritorio.png");
