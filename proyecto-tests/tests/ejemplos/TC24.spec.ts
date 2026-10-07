@@ -5,7 +5,7 @@ import { esperarFlash } from '../../helpers/flash';
 import { test, expect } from '../../fixtures';
 import { PaginaFormularioPrestacion } from '../../pages/PaginaFormularioPrestacion';
 
-test('TC24 — Eliminar en cascada de Seguidas', async ({ comoMedico: page }) => {
+test('TC24 - Eliminar en cascada de Seguidas', async ({ comoMedico: page }) => {
     
     await expect(page.getByRole('link', { name: 'Nueva prestación' })).toHaveCount(1);
     const prestacion = new PaginaFormularioPrestacion(page);

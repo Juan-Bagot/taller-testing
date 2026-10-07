@@ -27,7 +27,7 @@ test('TC25 — Seguir desde el detalle y quitar', async ({ comoPaciente: page })
     await expect(page).toHaveURL(/seguidas\.php/);
     await expect(audiometria.getByRole('cell', { name: 'Estudio' })).toBeVisible();
     await expect(audiometria.getByRole('cell', { name: '$ 700,00' })).toBeVisible();
-    await expect(audiometria.getByRole('cell', { name: '-09-14'})).toHaveText(fechaHoy());
+    await expect(audiometria.getByRole('cell', { name: fechaHoy()})).toHaveText(fechaHoy());
     
     await botonQuitar.click();
     await expect(page.getByRole('cell', {name: 'Terapia respiratoria'})).toBeVisible();
