@@ -1,12 +1,8 @@
 import { expect, test } from "../fixtures";
-import { PaginaLogin } from "../pages/PaginaLogin";
-import { ANA } from "../helpers/usuarios";
 
 test("TC29 - Historial descendente y precio histórico congelado", async ({
-  page,
+  comoAna: page,
 }) => {
-  await new PaginaLogin(page).entrar(ANA.email, ANA.password);
-
   await page.getByRole("link", { name: "Historial" }).click();
 
   const ordenReciente = page

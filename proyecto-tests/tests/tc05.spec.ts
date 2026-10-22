@@ -7,7 +7,7 @@ test("TC05 - Login exitoso de médico", async ({ page }) => {
   await new PaginaLogin(page).entrar(MEDICO.email, MEDICO.password);
 
   await expect(page).toHaveURL(/catalogo\.php/);
-  await esperarFlash(page, "ok", "Hola, Dra. Admin.");
+  await esperarFlash(page, "ok", `Hola, ${MEDICO.nombre}.`);
 
   await expect(
     page.getByRole("link", { name: "Nueva prestación" }),

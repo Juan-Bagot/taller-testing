@@ -1,11 +1,7 @@
 import { expect, test } from "../fixtures";
-import { PaginaLogin } from "../pages/PaginaLogin";
-import { MEDICO } from "../helpers/usuarios";
 import { esperarFlash } from "../helpers/flash";
 
-test("TC10 - médico no accede a funciones de paciente", async ({ page }) => {
-  await new PaginaLogin(page).entrar(MEDICO.email, MEDICO.password);
-
+test("TC10 - médico no accede a funciones de paciente", async ({ comoMedico: page }) => {
   for (const url of ["seguidas.php", "solicitud.php", "historial.php"]) {
     await page.goto("/" + url);
 

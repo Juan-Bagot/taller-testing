@@ -1,16 +1,11 @@
 import { expect, test } from "../fixtures";
-import { PaginaLogin } from "../pages/PaginaLogin";
 import { PaginaCatalogo } from "../pages/PaginaCatalogo";
 import { PaginaDetalle } from "../pages/PaginaDetalle";
 import { PaginaSolicitud } from "../pages/PaginaSolicitud";
 import { PaginaHistorial } from "../pages/PaginaHistorial";
-import { LUIS } from "../helpers/usuarios";
 
-test("TC28 - Confirmar la orden médica", async ({ page }) => {
-  await new PaginaLogin(page).entrar(LUIS.email, LUIS.password);
-
+test("TC28 - Confirmar la orden médica", async ({ comoPaciente: page }) => {
   const catalogo = new PaginaCatalogo(page);
-  await catalogo.ir();
   await catalogo.solicitar("Ecografía abdominal");
 
   await catalogo.abrirDetalle("Fisioterapia de rodilla");

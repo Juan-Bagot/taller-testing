@@ -6,17 +6,13 @@ import { PaginaSolicitud } from "../pages/PaginaSolicitud";
 import { PaginaHistorial } from "../pages/PaginaHistorial";
 import { esperarFlash } from "../helpers/flash";
 import { nombreUnico } from "../helpers/datos";
-import { LUIS, MEDICO } from "../helpers/usuarios";
+import { LUIS } from "../helpers/usuarios";
 
-test("TC30 - Precio histórico end-to-end con dos roles", async ({ browser }) => {
+test("TC30 - Precio histórico end-to-end con dos roles", async ({
+  comoMedico: pageMedico,
+  browser,
+}) => {
   const nombre = nombreUnico("Historico");
-
-  const contextoMedico = await browser.newContext({
-    baseURL: "http://localhost:9080",
-    locale: "es-UY",
-  });
-  const pageMedico = await contextoMedico.newPage();
-  await new PaginaLogin(pageMedico).entrar(MEDICO.email, MEDICO.password);
 
   const formulario = new PaginaFormularioPrestacion(pageMedico);
   await formulario.irAlta();

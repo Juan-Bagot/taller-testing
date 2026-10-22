@@ -1,46 +1,37 @@
 import { expect, test } from "../fixtures";
-import { PaginaLogin } from "../pages/PaginaLogin";
-import { MEDICO } from "../helpers/usuarios";
+import { PaginaCatalogo } from "../pages/PaginaCatalogo";
+import { PaginaFormularioPrestacion } from "../pages/PaginaFormularioPrestacion";
+import { nombreUnico } from "../helpers/datos";
 import { esperarFlash } from "../helpers/flash";
 
-test("TC18 - Crear un estudio (auto-contenido)", async ({ page }) => {
-  const nombre = `Estudio Prueba ${Date.now()}`;
-
-  await new PaginaLogin(page).entrar(MEDICO.email, MEDICO.password);
+test("TC18 - Crear un estudio (auto-contenido)", async ({ comoMedico: page }) => {
+  const nombre = nombreUnico("Estudio Prueba");
+  const catalogo = new PaginaCatalogo(page);
 
   await page.getByRole("link", { name: "Nueva prestación" }).click();
 
-  await page.getByLabel("Estudio").check();
-  await page.getByLabel("Nombre").fill(nombre);
-  await page.getByLabel("Precio").fill("990");
-  await page.getByLabel("Franja").selectOption({ label: "Tarde" });
-  await page.getByLabel("Duración (minutos)").fill("25");
-
-  await page.getByRole("button", { name: "Crear prestación" }).click();
+  const formulario = new PaginaFormularioPrestacion(page);
+  await formulario.completarEstudio({ nombre, precio: 990, franja: "Tarde", duracion: 25 });
+  await formulario.enviar();
 
   await expect(page).toHaveURL(/catalogo\.php/);
   await esperarFlash(page, "ok", "Prestación creada.");
 
-  const fila = page.getByRole("row").filter({ hasText: nombre });
+  const fila = catalogo.filaDe(nombre);
 
   await expect(fila).toBeVisible();
   await expect(fila).toContainText("Estudio");
   await expect(fila).toContainText("Tarde");
   await expect(fila).toContainText("$ 990,00");
 
-  await fila.getByRole("link", { name: /editar/i }).click();
+  await catalogo.abrirDetalle(nombre);
 
-  await expect(page).toHaveURL(/prestacion_editar\.php\?id=\d+/);
+  await expect(page).toHaveURL(/prestacion\.php\?id=\d+/);
+  await expect(page.getByText("Duración")).toBeVisible();
+  await expect(page.getByText("25 minutos")).toBeVisible();
 
-  await expect(page.getByLabel("Duración (minutos)")).toHaveValue("25");
+  await catalogo.ir();
+  await catalogo.eliminar(nombre);
 
-  await page.goto("/catalogo.php");
-
-  const filaCreada = page.getByRole("row").filter({ hasText: nombre });
-
-  await filaCreada.getByRole("button", { name: /eliminar/i }).click();
-
-  await expect(page.getByRole("row").filter({ hasText: nombre })).toHaveCount(
-    0,
-  );
+  await expect(catalogo.filaDe(nombre)).toHaveCount(0);
 });
