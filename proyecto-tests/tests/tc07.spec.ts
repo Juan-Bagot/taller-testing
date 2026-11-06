@@ -6,9 +6,12 @@ import { PaginaHistorial } from '../pages/PaginaHistorial';
 import { PaginaSolicitud } from '../pages/PaginaSolicitud'
 import { esperarFlash } from '../helpers/flash';
 
-test(`TC07:  Salir cierra la sesión y descarta la solicitud a medio armar`, async ({ page }: { page: Page }) => {
+test(`TC07: Salir cierra la sesión y descarta la solicitud a medio armar`, async ({ page }: { page: Page }) => {
+
+    const login = new PaginaLogin(page);
+
     //1
-    await new PaginaLogin(page).entrar(LUIS.email, LUIS.password);
+    await login.entrar(LUIS.email, LUIS.password);
 
     //2
     await new PaginaCatalogo(page).solicitar('Audiometría');
@@ -24,7 +27,7 @@ test(`TC07:  Salir cierra la sesión y descarta la solicitud a medio armar`, asy
     await esperarFlash(page, 'error', 'Tenés que iniciar sesión para entrar ahí.');
 
     //5
-    await new PaginaLogin(page).entrar(LUIS.email, LUIS.password);
+    await login.entrar(LUIS.email, LUIS.password);
     await new PaginaSolicitud(page).ir();
     await expect(page.getByText('La solicitud está vacía.')).toBeVisible();
     await expect(page.getByText(/Solicitud \d/)).not.toBeVisible();

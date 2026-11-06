@@ -5,21 +5,25 @@ import { PaginaCatalogo } from '../pages/PaginaCatalogo';
 import { PaginaDetalle } from '../pages/PaginaDetalle';
 import { PaginaSolicitud } from '../pages/PaginaSolicitud';
 
-test('Armar y editar la solicitud (auto-contenido: el carrito vive en la sesión)', async ({ page }: { page: Page }) => {
+test('TC27: Armar y editar la solicitud (auto-contenido: el carrito vive en la sesión)', async ({ page }: { page: Page }) => {
+
+    const catalogo = new PaginaCatalogo(page);
+    const solicitud = new PaginaSolicitud(page);
+
     //Precondiciones
     await new PaginaLogin(page).entrar(LUIS.email, LUIS.password);
 
     //1
-    await new PaginaCatalogo(page).solicitar('Audiometría');
+    await catalogo.solicitar('Audiometría');
     await expect(page.getByText('Solicitud 1')).toBeVisible();
 
     //2
-    await new PaginaCatalogo(page).abrirDetalle('Fonoaudiología');
+    await catalogo.abrirDetalle('Fonoaudiología');
     await new PaginaDetalle(page).agregarASolicitud(3);
     await expect(page.getByText('Solicitud 4')).toBeVisible();
 
     //3
-    await new PaginaSolicitud(page).ir();
+    await solicitud.ir();
     // Audiometría `$ 700,00 × 1 = $ 700,00`
     await expect(page.getByText('Audiometría $ 700,00 1 $ 700,00')).toBeVisible();
     // Fonoaudiología `$ 600,00 × 3 = $ 1.800,00`
@@ -28,11 +32,11 @@ test('Armar y editar la solicitud (auto-contenido: el carrito vive en la sesión
     await expect(page.getByText('Total $ 2.500,00')).toBeVisible();
 
     //4
-    await new PaginaSolicitud(page).quitar('Fonoaudiología');
+    await solicitud.quitar('Fonoaudiología');
     await expect(page.getByText('Total $ 700,00')).toBeVisible();
 
     //5
-    await new PaginaSolicitud(page).quitar('Audiometría');
+    await solicitud.quitar('Audiometría');
     await expect(page.getByText('La solicitud está vacía.')).toBeVisible();
     await expect(page.getByText(/Solicitud \d/)).not.toBeVisible();
 });

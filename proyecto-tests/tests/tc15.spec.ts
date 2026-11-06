@@ -2,9 +2,12 @@ import { expect, test, type Page } from '@playwright/test';
 import { PaginaCatalogo } from '../pages/PaginaCatalogo'
 
 test(`TC15: Detalle de un estudio`, async ({ page }: { page: Page }) => {
+
+    const catalogo = new PaginaCatalogo(page);
+
     //1
-    await new PaginaCatalogo(page).ir();
-    await new PaginaCatalogo(page).abrirDetalle('Audiometría');
+    await catalogo.ir();
+    await catalogo.abrirDetalle('Audiometría');
 
     // Lo que SÍ debe verse
     await expect(page.getByText('Estudio')).toBeVisible();
